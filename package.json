@@ -1,0 +1,11 @@
+{
+  "name": "muir-woods-tide-check",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "refresh": "python3 scripts/fetch_data.py",
+    "dev": "python3 -m http.server 4173 --directory public"
+  }
+}
