@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {HOUR,parseNOAA,pacificTime,dateKey,points,valueAt,residual,assess,windows} from '../public/model.js';
+import {HOUR,parseNOAA,pacificTime,dateKey,points,valueAt,residual,forecastPoints,forecastAt,forecastFresh,assess,windows} from '../public/model.js';
 const now=Date.parse('2026-11-12T18:00:00Z');
 function fixture(height=3){
   const predictions=Array.from({length:1001},(_,i)=>({t:now-25*HOUR+i*6*60000,v:height}));
@@ -8,7 +8,9 @@ function fixture(height=3){
   const sources=Object.fromEntries(['incidents','road1','road101','alerts','weather'].map(k=>[k,{...source}]));
   sources.alerts.data={features:[]};
   sources.weather.data={properties:{periods:[{startTime:new Date(now-30*HOUR).toISOString(),endTime:new Date(now+70*HOUR).toISOString(),shortForecast:'Sunny',probabilityOfPrecipitation:{value:0}}]}};
-  return {predictions,sources,now,excess:{v:.2,t:now,count:8},margin:.5,drain:2};
+  const forecast=Array.from({length:81},(_,i)=>({t:now-6*HOUR+i*HOUR,mean:height+.1,lower:height,upper:height+.2}));
+  sources.forecast={...source,data:{issuedAt:new Date(now-6*HOUR).toISOString(),datum:'MLLW',units:'feet',station:'9414290',points:forecast.map(p=>({...p,t:new Date(p.t).toISOString()}))}};
+  return {predictions,sources,forecast,now,excess:{v:.2,t:now,count:8},margin:.5,drain:2};
 }
 test('NOAA times are interpreted as UTC independently of the machine timezone',()=>assert.equal(parseNOAA('2026-11-12 18:00'),now));
 test('Pacific winter and summer clock conversion and date boundaries',()=>{
@@ -82,4 +84,19 @@ test('historical checks never reuse current road or weather reports as historica
 test('a missing interval inside the clearance history prevents a lower-exposure result',()=>{
  const ctx=fixture();ctx.predictions=ctx.predictions.filter(p=>p.t<now-1.5*HOUR||p.t>now-HOUR);
  assert.equal(assess(now,ctx).title,'Tide data incomplete');
+});
+test('official upper bound can prevent a reassuring result when astronomical tide is low',()=>{
+ const ctx=fixture();ctx.forecast=ctx.forecast.map(p=>({...p,mean:6.2,upper:6.8,lower:5.8}));
+ const result=assess(now,ctx);assert.equal(result.level,3);assert.ok(result.peak>=6.8);assert.match(result.reason,/upper forecast bound/);
+});
+test('missing ensemble, an old model cycle or a gap in its coverage cannot pass the crossing',()=>{
+ const a=fixture();delete a.sources.forecast;assert.equal(assess(now,a).title,'Total-water forecast unavailable');
+ const b=fixture();b.sources.forecast.data.issuedAt=new Date(now-19*HOUR).toISOString();assert.equal(assess(now,b).level,2);
+ const c=fixture();c.forecast=c.forecast.filter(p=>p.t!==now);assert.equal(assess(now,c).level,2);
+});
+test('ensemble reader checks datum, station, units, ordered bounds and gap limits',()=>{
+ const ctx=fixture();assert.ok(forecastFresh(ctx));assert.equal(forecastPoints(ctx.sources.forecast).length,81);
+ ctx.sources.forecast.data.datum='NAVD88';assert.deepEqual(forecastPoints(ctx.sources.forecast),[]);
+ assert.equal(forecastAt([{t:now,lower:1,mean:2,upper:3},{t:now+HOUR,lower:2,mean:3,upper:4}],now+HOUR/2),3.5);
+ assert.equal(forecastAt([{t:now,upper:3},{t:now+2*HOUR,upper:4}],now+HOUR),null);
 });

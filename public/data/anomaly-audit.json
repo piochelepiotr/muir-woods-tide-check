@@ -1,0 +1,57 @@
+{
+  "generatedAt": "2026-11-13T04:11:40.243278+00:00",
+  "event": {
+    "utc": "2026-10-29T20:42:00Z",
+    "pacific": "2026-10-29 13:42 PDT",
+    "station": "9414290",
+    "units": "feet",
+    "datum": "MLLW",
+    "astronomicalPrediction": 6.534,
+    "verifiedObserved": 8.046,
+    "observedMinusPredicted": 1.512,
+    "observationQuality": "v; all four flags zero"
+  },
+  "sanFranciscoDailyResiduals": [
+    {
+      "pacificDate": "2026-10-29",
+      "samples": 240,
+      "medianObservedMinusPredictedFt": 1.263,
+      "minimumFt": 0.826,
+      "maximumFt": 1.651
+    },
+    {
+      "pacificDate": "2026-10-30",
+      "samples": 240,
+      "medianObservedMinusPredictedFt": 1.418,
+      "minimumFt": 1.184,
+      "maximumFt": 1.769
+    },
+    {
+      "pacificDate": "2026-10-31",
+      "samples": 213,
+      "medianObservedMinusPredictedFt": 1.365,
+      "minimumFt": 1.197,
+      "maximumFt": 1.75
+    }
+  ],
+  "nearbyGaugeChecks": [
+    {
+      "name": "Point Reyes",
+      "medianResidualFt": 1.382,
+      "samples": 240,
+      "observationsURL": "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?datum=MLLW&units=english&time_zone=gmt&format=json&begin_date=20261028&end_date=20261031&application=MuirWoodsTideCheck&station=9415020&product=water_level",
+      "predictionsURL": "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?datum=MLLW&units=english&time_zone=gmt&format=json&begin_date=20261028&end_date=20261031&application=MuirWoodsTideCheck&station=9415020&product=predictions&interval=6"
+    },
+    {
+      "name": "Alameda",
+      "medianResidualFt": 1.167,
+      "samples": 240,
+      "observationsURL": "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?datum=MLLW&units=english&time_zone=gmt&format=json&begin_date=20261028&end_date=20261031&application=MuirWoodsTideCheck&station=9414750&product=water_level",
+      "predictionsURL": "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?datum=MLLW&units=english&time_zone=gmt&format=json&begin_date=20261028&end_date=20261031&application=MuirWoodsTideCheck&station=9414750&product=predictions&interval=6"
+    }
+  ],
+  "attribution": "NOAA attributes the regional late-October event to high astronomical tides combined with El Nino-driven Kelvin waves and thermal expansion during a marine heatwave. The residual here measures the water beyond the astronomical tide. These gauge comparisons do not partition the residual among physical causes.",
+  "attributionSource": "https://oceanservice.noaa.gov/news/nov26/california-record-water-levels.html",
+  "uncertaintySource": "https://www.nco.ncep.noaa.gov/pmb/products/petss/",
+  "limitation": "P-ETSS ensemble spread is not calibrated road-closure probability. No complete closure/reopening ground truth is available."
+}

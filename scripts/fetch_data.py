@@ -20,7 +20,7 @@ URLS = {
     'predictions': BASE + COMMON + f'&product=predictions&interval=6&begin_date={START}&end_date={END}',
     'extremes': BASE + COMMON + f'&product=predictions&interval=hilo&begin_date={START}&end_date={END}',
     'observations': BASE + COMMON + '&product=water_level&' + urllib.parse.urlencode({'begin_date': (NOW-dt.timedelta(hours=3)).strftime('%Y%m%d %H:%M'), 'end_date': NOW.strftime('%Y%m%d %H:%M')}),
-    'alerts': 'https://api.weather.gov/alerts/active?point=37.879,-122.516',
+    'alerts': 'https://api.weather.gov/alerts/active?zone=CAZ505,CAZ506',
     'weather': 'https://api.weather.gov/gridpoints/MTR/82,110/forecast/hourly',
     'incidents': 'https://quickmap.dot.ca.gov/data/chp-only.kml',
     'road1': 'https://roads.dot.ca.gov/roadscell.php?roadnumber=1',
