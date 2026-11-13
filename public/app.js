@@ -64,9 +64,9 @@ function renderChart(){
   const day=$('trip-date').value;
   if(!day)return;
   const start=pacificTime(day),end=pacificTime(addDays(day,1)),series=predictions.filter(p=>p.t>=start&&p.t<=end),svg=$('tide-chart');
-  const usableForecast=forecastFresh(ctx),forecast=usableForecast?ctx.forecast.filter(p=>p.t>=start&&p.t<=end&&p.t>=ctx.now):[];
+  const usableForecast=forecastFresh(ctx),forecast=usableForecast?ctx.forecast.filter(p=>p.t>=start&&p.t<end&&p.t>=ctx.now):[];
   const forecastPeak=forecast.toSorted((a,b)=>b.mean-a.mean)[0];
-  $('uncertainty-status').textContent=forecastPeak?`NOAA total water at the modeled daily high: ${num(forecastPeak.lower)}–${num(forecastPeak.upper)} ft MLLW, mean ${num(forecastPeak.mean)} ft at ${timeLabel(forecastPeak.t)}. Shading is the 10th–90th percentile ensemble spread, not a road-open probability. Cycle ${stamp(Date.parse(sources.forecast.data.issuedAt))}.`:day<today?'Historical view: today’s ensemble is not an archived forecast for this date. The orange curve shows available observed water levels.':'No fresh official uncertainty band covers this date. A tide-plus-margin scenario is shown; lower-exposure windows remain unverified.';
+  $('uncertainty-status').textContent=forecastPeak?`NOAA total water at the highest ${day===today?'remaining forecast hour today':'forecast hour on this date'}: ${num(forecastPeak.lower)}–${num(forecastPeak.upper)} ft MLLW, mean ${num(forecastPeak.mean)} ft at ${timeLabel(forecastPeak.t)}. Shading is the 10th–90th percentile ensemble spread, not a road-open probability. Cycle ${stamp(Date.parse(sources.forecast.data.issuedAt))}.`:day<today?'Historical view: today’s ensemble is not an archived forecast for this date. The orange curve shows available observed water levels.':'No fresh official uncertainty band covers this date. A tide-plus-margin scenario is shown; lower-exposure windows remain unverified.';
   $('chart-title').textContent=dateLabel(pacificTime(day,'12:00'))+' · tide at San Francisco';
   if(!series.length){svg.innerHTML='<text x="500" y="140" text-anchor="middle" class="no-chart">No tide predictions available for this date</text>';svg.setAttribute('aria-label','No tide predictions available for this date');chartState=null;return;}
   const W=1000,H=285,L=42,R=18,T=15,B=36,plotW=W-L-R,plotH=H-T-B;
